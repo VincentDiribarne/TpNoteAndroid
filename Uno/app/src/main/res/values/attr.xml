@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <attr name="colorBleu" format="reference"></attr>
+    <attr name="colorSecondaryBleu" format="reference"></attr>
+    <attr name="imagePassword" format="reference"></attr>
+    <attr name="colorPseudo" format="reference"></attr>
+    <attr name="fondPseudo" format="reference"></attr>
+</resources>

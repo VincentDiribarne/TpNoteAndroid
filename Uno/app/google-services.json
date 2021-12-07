@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1007385193014",
+    "project_id": "unotpnote",
+    "storage_bucket": "unotpnote.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1007385193014:android:2554dbe48c4e0464ab0697",
+        "android_client_info": {
+          "package_name": "com.example.uno"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1007385193014-qls6ndq8g57rdfikvd404k0o8dvj9orp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.uno",
+            "certificate_hash": "a9943d11aed0099fd11837579fa3218940cde1ef"
+          }
+        },
+        {
+          "client_id": "1007385193014-4njd3semhi9f110itcesuifm0qfmchhc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCuPojJPdb__jGV1CJB8RkWuGmoqJjmYSw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1007385193014-4njd3semhi9f110itcesuifm0qfmchhc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
