@@ -1,5 +1,6 @@
 package com.example.uno.Activity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,218 +17,154 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.uno.Autres.AdaptateurMainJoueur;
 import com.example.uno.Autres.Cartes;
-import com.example.uno.Autres.Couleur;
+import com.example.uno.Autres.Defausse;
 import com.example.uno.Autres.Joueur;
 import com.example.uno.Autres.NombreAleatoire;
+import com.example.uno.Autres.PaquetCartes;
 import com.example.uno.R;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class JouerActivite extends AppCompatActivity {
-    private List<Cartes> paquetCartes = new ArrayList<>();
-    private List<Cartes> defausse = new ArrayList<>();
-    private List<Cartes> mainJoueur = new ArrayList<>();
+    private Defausse defausse = LancementPartieActivity.defausse;
+    private PaquetCartes paquetCartes = LancementPartieActivity.paquetCartes;
+    private List<Cartes> mainJoueur;
+    private List<Joueur> joueursList = CreationActivity.joueurList;
 
     private TextView pseudoJoueur;
     private Button findetour;
-    private ImageView pioche, defausseImageView;
+    private ImageView pioche, defausseImageView, invisible;
     private RecyclerView recyclerView;
     private AdaptateurMainJoueur adaptateurMainJoueur;
+
+    public int i = 0;
+    public boolean passage = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_jeux);
+
+        invisible = findViewById(R.id.imageView);
+
+        recyclerView = findViewById(R.id.recyclerViewCartes);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false));
+
+        mainJoueur = joueursList.get(i).getMainCartes();
+        adaptateurMainJoueur = new AdaptateurMainJoueur(mainJoueur);
+        recyclerView.setAdapter(adaptateurMainJoueur);
+
+        lancementTour();
+    }
+
+
+
+    //Change de joueur et fait toute les actions necessaires pour pouvoir jouer
+    private void changementDeJoueur() {
+        invisible.setVisibility(View.INVISIBLE);
         pseudoJoueur = findViewById(R.id.Pseudo);
         findetour = findViewById(R.id.finDeTour);
         pioche = findViewById(R.id.pioche);
         defausseImageView = findViewById(R.id.defausse);
 
-        Intent intentRecup = getIntent();
+        affichageTexte(i);
+        defausseImageView.setBackgroundResource(defausse.getDefausse().get(defausse.getDefausse().size() - 1).getBackgroundCarte());
 
-        int intentNombre = intentRecup.getIntExtra("Position", -1);
-        List<Joueur> joueursList = CreationActivity.joueurs;
-        findetour.setVisibility(View.INVISIBLE);
-        recyclerView = findViewById(R.id.recyclerViewCartes);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        plus_deux();
+        change_sens();
+        sens_interdit();
 
+        pioche.setBackgroundResource(R.drawable.choix_couleur);
 
-        if (intentNombre == -1) {
-            initList();
-            for (int i = 0; i < joueursList.size(); i++) {
-                for (int j = 0; j < 7; j++) {
-                    mainJoueur.add(paquetCartes.remove(NombreAleatoire.getNombreRandom(paquetCartes.size(), 1)));
-                }
-                joueursList.get(i).setMainCartes(mainJoueur);
-                Log.i("Joueur", joueursList.get(i).getNom());
-                Log.i("Main Joueur", String.valueOf(joueursList.get(i).getMainCartes()));
+        this.adaptateurMainJoueur.notifyItemRemoved(getMainJoueur().size());
+
+        findetour.setOnClickListener(v -> findetour());
+        pioche.setOnClickListener(v -> pioche());
+    }
+
+    //Pour le sens interdit
+    private void sens_interdit() {
+        if(passage == false) {
+            if (defausse.getDefausse().get(defausse.getDefausse().size() - 1).getNumero() == "PasseTour") {
+                passage = true;
+                i++;
+                findetour();
             }
-            intentNombre = 0;
-            lancementTour(joueursList, intentNombre);
-        } else {
-            affichageTexte(joueursList, intentNombre);
-            affichageCarte(joueursList, intentNombre);
-
-            pioche.setOnClickListener(v -> {
-                mainJoueur.add(paquetCartes.remove(NombreAleatoire.getNombreRandom(paquetCartes.size(), 1)));
-                findetour.setVisibility(View.VISIBLE);
-            });
-
-            int finalIntentNombre = intentNombre;
-            findetour.setOnClickListener(v -> lancementTour(joueursList, finalIntentNombre));
         }
     }
 
-    private void initList() {
-        paquetCartes.add(new Cartes("0", Couleur.Bleu));
-        paquetCartes.add(new Cartes("1", Couleur.Bleu));
-        paquetCartes.add(new Cartes("2", Couleur.Bleu));
-        paquetCartes.add(new Cartes("3", Couleur.Bleu));
-        paquetCartes.add(new Cartes("4", Couleur.Bleu));
-        paquetCartes.add(new Cartes("5", Couleur.Bleu));
-        paquetCartes.add(new Cartes("6", Couleur.Bleu));
-        paquetCartes.add(new Cartes("7", Couleur.Bleu));
-        paquetCartes.add(new Cartes("8", Couleur.Bleu));
-        paquetCartes.add(new Cartes("9", Couleur.Bleu));
-        paquetCartes.add(new Cartes("1", Couleur.Bleu));
-        paquetCartes.add(new Cartes("2", Couleur.Bleu));
-        paquetCartes.add(new Cartes("3", Couleur.Bleu));
-        paquetCartes.add(new Cartes("4", Couleur.Bleu));
-        paquetCartes.add(new Cartes("5", Couleur.Bleu));
-        paquetCartes.add(new Cartes("6", Couleur.Bleu));
-        paquetCartes.add(new Cartes("7", Couleur.Bleu));
-        paquetCartes.add(new Cartes("8", Couleur.Bleu));
-        paquetCartes.add(new Cartes("9", Couleur.Bleu));
-        paquetCartes.add(new Cartes("+2", Couleur.Bleu));
-        paquetCartes.add(new Cartes("+2", Couleur.Bleu));
-        paquetCartes.add(new Cartes(Couleur.Bleu, R.drawable.ic_action_bin));
-        paquetCartes.add(new Cartes(Couleur.Bleu, R.drawable.ic_action_bin));
-        paquetCartes.add(new Cartes(Couleur.Bleu, R.drawable.ic_action_rotate));
-        paquetCartes.add(new Cartes(Couleur.Bleu, R.drawable.ic_action_rotate));
-
-
-        paquetCartes.add(new Cartes("0", Couleur.Vert));
-        paquetCartes.add(new Cartes("1", Couleur.Vert));
-        paquetCartes.add(new Cartes("2", Couleur.Vert));
-        paquetCartes.add(new Cartes("3", Couleur.Vert));
-        paquetCartes.add(new Cartes("4", Couleur.Vert));
-        paquetCartes.add(new Cartes("5", Couleur.Vert));
-        paquetCartes.add(new Cartes("6", Couleur.Vert));
-        paquetCartes.add(new Cartes("7", Couleur.Vert));
-        paquetCartes.add(new Cartes("8", Couleur.Vert));
-        paquetCartes.add(new Cartes("9", Couleur.Vert));
-        paquetCartes.add(new Cartes("1", Couleur.Vert));
-        paquetCartes.add(new Cartes("2", Couleur.Vert));
-        paquetCartes.add(new Cartes("3", Couleur.Vert));
-        paquetCartes.add(new Cartes("4", Couleur.Vert));
-        paquetCartes.add(new Cartes("5", Couleur.Vert));
-        paquetCartes.add(new Cartes("6", Couleur.Vert));
-        paquetCartes.add(new Cartes("7", Couleur.Vert));
-        paquetCartes.add(new Cartes("8", Couleur.Vert));
-        paquetCartes.add(new Cartes("9", Couleur.Vert));
-        paquetCartes.add(new Cartes("+2", Couleur.Vert));
-        paquetCartes.add(new Cartes("+2", Couleur.Vert));
-        paquetCartes.add(new Cartes(Couleur.Vert, R.drawable.ic_action_bin));
-        paquetCartes.add(new Cartes(Couleur.Vert, R.drawable.ic_action_bin));
-        paquetCartes.add(new Cartes(Couleur.Vert, R.drawable.ic_action_rotate));
-        paquetCartes.add(new Cartes(Couleur.Vert, R.drawable.ic_action_rotate));
-
-
-        paquetCartes.add(new Cartes("0", Couleur.Rouge));
-        paquetCartes.add(new Cartes("1", Couleur.Rouge));
-        paquetCartes.add(new Cartes("2", Couleur.Rouge));
-        paquetCartes.add(new Cartes("3", Couleur.Rouge));
-        paquetCartes.add(new Cartes("4", Couleur.Rouge));
-        paquetCartes.add(new Cartes("5", Couleur.Rouge));
-        paquetCartes.add(new Cartes("6", Couleur.Rouge));
-        paquetCartes.add(new Cartes("7", Couleur.Rouge));
-        paquetCartes.add(new Cartes("8", Couleur.Rouge));
-        paquetCartes.add(new Cartes("9", Couleur.Rouge));
-        paquetCartes.add(new Cartes("1", Couleur.Rouge));
-        paquetCartes.add(new Cartes("2", Couleur.Rouge));
-        paquetCartes.add(new Cartes("3", Couleur.Rouge));
-        paquetCartes.add(new Cartes("4", Couleur.Rouge));
-        paquetCartes.add(new Cartes("5", Couleur.Rouge));
-        paquetCartes.add(new Cartes("6", Couleur.Rouge));
-        paquetCartes.add(new Cartes("7", Couleur.Rouge));
-        paquetCartes.add(new Cartes("8", Couleur.Rouge));
-        paquetCartes.add(new Cartes("9", Couleur.Rouge));
-        paquetCartes.add(new Cartes("+2", Couleur.Rouge));
-        paquetCartes.add(new Cartes("+2", Couleur.Rouge));
-        paquetCartes.add(new Cartes(Couleur.Rouge, R.drawable.ic_action_bin));
-        paquetCartes.add(new Cartes(Couleur.Rouge, R.drawable.ic_action_bin));
-        paquetCartes.add(new Cartes(Couleur.Rouge, R.drawable.ic_action_rotate));
-        paquetCartes.add(new Cartes(Couleur.Rouge, R.drawable.ic_action_rotate));
-
-
-        paquetCartes.add(new Cartes("0", Couleur.Jaune));
-        paquetCartes.add(new Cartes("1", Couleur.Jaune));
-        paquetCartes.add(new Cartes("2", Couleur.Jaune));
-        paquetCartes.add(new Cartes("3", Couleur.Jaune));
-        paquetCartes.add(new Cartes("4", Couleur.Jaune));
-        paquetCartes.add(new Cartes("5", Couleur.Jaune));
-        paquetCartes.add(new Cartes("6", Couleur.Jaune));
-        paquetCartes.add(new Cartes("7", Couleur.Jaune));
-        paquetCartes.add(new Cartes("8", Couleur.Jaune));
-        paquetCartes.add(new Cartes("9", Couleur.Jaune));
-        paquetCartes.add(new Cartes("1", Couleur.Jaune));
-        paquetCartes.add(new Cartes("2", Couleur.Jaune));
-        paquetCartes.add(new Cartes("3", Couleur.Jaune));
-        paquetCartes.add(new Cartes("4", Couleur.Jaune));
-        paquetCartes.add(new Cartes("5", Couleur.Jaune));
-        paquetCartes.add(new Cartes("6", Couleur.Jaune));
-        paquetCartes.add(new Cartes("7", Couleur.Jaune));
-        paquetCartes.add(new Cartes("8", Couleur.Jaune));
-        paquetCartes.add(new Cartes("9", Couleur.Jaune));
-        paquetCartes.add(new Cartes("+2", Couleur.Jaune));
-        paquetCartes.add(new Cartes("+2", Couleur.Jaune));
-        paquetCartes.add(new Cartes(Couleur.Jaune, R.drawable.ic_action_bin));
-        paquetCartes.add(new Cartes(Couleur.Jaune, R.drawable.ic_action_bin));
-        paquetCartes.add(new Cartes(Couleur.Jaune, R.drawable.ic_action_rotate));
-        paquetCartes.add(new Cartes(Couleur.Jaune, R.drawable.ic_action_rotate));
-
-        paquetCartes.add(new Cartes("+4", Couleur.Noire));
-        paquetCartes.add(new Cartes("+4", Couleur.Noire));
-        paquetCartes.add(new Cartes("+4", Couleur.Noire));
-        paquetCartes.add(new Cartes("+4", Couleur.Noire));
-
-        paquetCartes.add(new Cartes(Couleur.Noire, R.drawable.choix_couleur));
-        paquetCartes.add(new Cartes(Couleur.Noire, R.drawable.choix_couleur));
-        paquetCartes.add(new Cartes(Couleur.Noire, R.drawable.choix_couleur));
-        paquetCartes.add(new Cartes(Couleur.Noire, R.drawable.choix_couleur));
+    //Pour le plus deux
+    private void plus_deux() {
+        if (defausse.getDefausse().get(defausse.getDefausse().size() - 1).getNumero() == "+2") {
+            mainJoueur.add(paquetCartes.getPaquetDeCartes().remove((NombreAleatoire.getNombreRandom(paquetCartes.getPaquetDeCartes().size(), 1))));
+            mainJoueur.add(paquetCartes.getPaquetDeCartes().remove((NombreAleatoire.getNombreRandom(paquetCartes.getPaquetDeCartes().size(), 1))));
+            this.adaptateurMainJoueur.notifyItemInserted(mainJoueur.size() - 1);
+        }
     }
 
-    private void affichageCarte(List<Joueur> joueursList, int i) {
-        List<Cartes> mainjoueur = joueursList.get(i).getMainCartes();
-        adaptateurMainJoueur = new AdaptateurMainJoueur(mainjoueur);
-        recyclerView.setAdapter(adaptateurMainJoueur);
+    //Pour le changement de sens
+    private void change_sens() {
+        if (defausse.getDefausse().get(defausse.getDefausse().size() - 1).getNumero() == "ChangeSens") {
+            Collections.reverse(joueursList);
+        }
     }
 
-    private void affichageTexte(List<Joueur> joueursList, int i) {
+    //Permet de piocher
+    public void pioche() {
+        mainJoueur.add(paquetCartes.getPaquetDeCartes().remove((NombreAleatoire.getNombreRandom(paquetCartes.getPaquetDeCartes().size(), 1))));
+        if (paquetCartes.getPaquetDeCartes().size() < 10) {
+            paquetCartes.getPaquetDeCartes().addAll(defausse.getDefausse());
+        }
+        adaptateurMainJoueur.notifyItemInserted(mainJoueur.size());
+        findetour();
+    }
+
+    //Victoire
+    private void victoire() {
+        if (this.getMainJoueur().size() == 0) {
+            startActivity(new Intent(this, FinActivity.class));
+        }
+    }
+
+    //Fin de tour pour changer de joueur
+    private void findetour() {
+        victoire();
+        i++;
+        if (i >= joueursList.size()) {
+            i = 0;
+        }
+        lancementTour();
+    }
+
+    //Affiche le joueur actuel
+    private void affichageTexte(int i) {
         pseudoJoueur.setText(joueursList.get(i).getNom());
     }
 
-    public void lancementTour(List<Joueur> joueursList, int i) {
-        setContentView(R.layout.page_noir);
-        int j = i, finalJ;
-        if (joueursList.size() > i) {
-            j = i + 1;
-        } else {
-            j = 0;
-        }
-
-        finalJ = j;
+    //Lance le tour
+    public void lancementTour() {
+        invisible.setVisibility(View.VISIBLE);
         new AlertDialog.Builder(this)
                 .setTitle("A qui le tour ?")
                 .setMessage("C'est au tour de \"" + joueursList.get(i).getNom() + "\" de jouer")
                 .setIcon(R.drawable.uno_logo)
                 .setPositiveButton(R.string.commencer, (dialog, which) -> {
-                    Intent intent = new Intent(this, JouerActivite.class);
-
-                    intent.putExtra("Position", finalJ);
-                    startActivity(intent);
+                    changementDeJoueur();
                 })
                 .show();
+    }
+
+    //Getter et setter
+    public List<Cartes> getMainJoueur() {
+        return mainJoueur;
+    }
+
+    public void setMainJoueur(List<Cartes> mainJoueur) {
+        this.mainJoueur = mainJoueur;
+    }
+
+    public void setDefausse(Defausse defausse) {
+        this.defausse = defausse;
     }
 }

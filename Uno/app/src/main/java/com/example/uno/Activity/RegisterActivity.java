@@ -13,7 +13,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.uno.Autres.Firebase;
 import com.example.uno.R;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,6 +29,7 @@ public class RegisterActivity extends AppCompatActivity {
     String mailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
     Firebase firebase = new Firebase();
 
+    //Classe inutile, mais toujours là
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

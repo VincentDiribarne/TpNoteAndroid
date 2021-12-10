@@ -30,16 +30,22 @@ public class AccueilActivity extends AppCompatActivity {
         profil = findViewById(R.id.profil);
         musicEnCours = true;
 
+        //Click pour jouer
         playDevice.setOnClickListener(v -> startActivity(new Intent(AccueilActivity.this, CreationActivity.class)));
 
+        //En ligne (ne sert à rien)
         playOnline.setOnClickListener(v -> Toast.makeText(AccueilActivity.this, "Pas encore fait, une future mise à jour", Toast.LENGTH_SHORT).show());
 
+        //Scores (ne sert à rien)
         scores.setOnClickListener(v -> startActivity(new Intent(AccueilActivity.this, ScoreActivity.class)));
 
+        //Les regles
         rules.setOnClickListener(v -> rules());
 
+        //Profil (ne sert à rien)
         profil.setOnClickListener(v -> startActivity(new Intent(AccueilActivity.this, ProfilActivity.class)));
 
+        //Musique (ne sert à rien)
         music.setOnClickListener(v -> {
             if (musicEnCours) {
                 music.setImageResource(R.drawable.ic_audio_off_black);
@@ -52,6 +58,7 @@ public class AccueilActivity extends AppCompatActivity {
     }
 
     public void rules() {
+        //Créer une alert dialog
         new AlertDialog.Builder(this)
                 .setTitle("Les règles")
                 .setMessage("Jouez avec vos amis sur le même téléphone. Utilisez vos cartes placées devant vous, et faites votre possible pour vous en débarrasser." +

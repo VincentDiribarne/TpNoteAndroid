@@ -44,6 +44,7 @@ public class LoginActivity extends AppCompatActivity {
     ImageButton signButton;
     String mailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
 
+    //Classe inutile, mais toujours là
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

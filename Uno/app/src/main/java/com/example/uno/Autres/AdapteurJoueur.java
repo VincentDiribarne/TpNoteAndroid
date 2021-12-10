@@ -24,6 +24,7 @@ public class AdapteurJoueur extends RecyclerView.Adapter<ViewHolderJoueur>{
     }
 
     @Override
+    //Change le texte
     public void onBindViewHolder(@NonNull ViewHolderJoueur holder, int position) {
         Joueur joueur = joueurs.get(position);
         holder.txt_view.setText(joueur.getNom());

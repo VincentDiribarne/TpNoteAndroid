@@ -9,6 +9,7 @@ import com.example.uno.R;
 
 public class ProfilActivity extends AppCompatActivity {
 
+    //Sert à rien
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

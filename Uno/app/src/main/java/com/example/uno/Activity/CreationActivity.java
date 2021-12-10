@@ -25,7 +25,8 @@ public class CreationActivity extends AppCompatActivity {
     private TextView pseudo;
     private Button valider;
     private RecyclerView recyclerView;
-    public static List<Joueur> joueurs = new ArrayList<>();
+    private ImageView ajout;
+    public static List<Joueur> joueurList = new ArrayList<>();
     private AdapteurJoueur adapteurJoueur;
 
     @Override
@@ -33,19 +34,21 @@ public class CreationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_creation);
 
-        ImageView ajout = findViewById(R.id.ajout);
+        ajout = findViewById(R.id.ajout);
         pseudo = findViewById(R.id.pseudoEditText);
         valider = findViewById(R.id.jouer);
 
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapteurJoueur = new AdapteurJoueur(joueurs);
+        adapteurJoueur = new AdapteurJoueur(joueurList);
         recyclerView.setAdapter(adapteurJoueur);
 
         interaction();
+        //Ajout de joueurs
         ajout.setOnClickListener(v -> ajout());
 
-        valider.setOnClickListener(v -> startActivity(new Intent(this, JouerActivite.class)));
+        //Lancement de la partie
+        valider.setOnClickListener(v -> startActivity(new Intent(this, LancementPartieActivity.class)));
     }
 
     public void interaction() {
@@ -57,12 +60,13 @@ public class CreationActivity extends AppCompatActivity {
             }
 
             @Override
+            //Supprime si on swipe
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 int pos = viewHolder.getAdapterPosition();
-                joueurs.remove(pos);
+                joueurList.remove(pos);
                 adapteurJoueur.notifyItemRemoved(pos);
 
-                if (joueurs.size() > 1) {
+                if (joueurList.size() > 1) {
                     valider.setVisibility(View.VISIBLE);
                 } else {
                     valider.setVisibility(View.INVISIBLE);
@@ -74,6 +78,7 @@ public class CreationActivity extends AppCompatActivity {
         helper.attachToRecyclerView(recyclerView);
     }
 
+    //Ajoute un joueur selon des conditions
     public void ajout() {
         String pseudoText = pseudo.getText().toString();
         if (pseudoText.isEmpty()) {
@@ -81,18 +86,25 @@ public class CreationActivity extends AppCompatActivity {
             return;
         }
 
-        if(pseudoText.length() > 30) {
+        if (pseudoText.length() > 30) {
             pseudo.setError("Trop long, 30 caractères max");
             pseudo.setText("");
             return;
         }
 
-        joueurs.add(new Joueur(pseudoText, 0));
+        if(pseudoText.length() < 4) {
+            pseudo.setError("Trop court, 5 caractères minimum");
+            pseudo.setText("");
+            return;
+        }
+
+        joueurList.add(new Joueur(pseudoText, 0));
         pseudo.setText("");
-        adapteurJoueur.notifyItemInserted(joueurs.size() + 1);
+        //Modifie l'adaptateur
+        adapteurJoueur.notifyItemInserted(joueurList.size() + 1);
         //TODO Met automatiquement en bas quand le joueur ajoute un message (TD2)
 
-        if (joueurs.size() > 1) {
+        if (joueurList.size() > 1) {
             valider.setVisibility(View.VISIBLE);
         }
     }
